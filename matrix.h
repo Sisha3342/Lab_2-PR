@@ -51,6 +51,10 @@ public:
 		delete[] matr;
 	}
 
+	matrix& operator= (matrix const& M);
+	matrix& operator+= (matrix const& M);
+	matrix& operator-= (matrix const& M);
+	/*friend matrix operator- (matrix const& M);*/
 	friend std::istream& operator>> (std::istream& in, matrix& M);
 	friend std::ostream& operator<< (std::ostream& out, matrix const& M);
 };

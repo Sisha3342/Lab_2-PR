@@ -5,7 +5,12 @@ int main()
 	matrix A(1, 2);
 
 	std::cin >> A;
-	std::cout << A;
+	matrix B(1, 2);
+	std::cin >> B;
+
+	A -= B;
+
+	std::cout << B;
 
 	return 0;
 }
