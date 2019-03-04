@@ -52,6 +52,16 @@ matrix& matrix::operator-= (matrix const& M)
 	return *this;
 }
 
+matrix matrix::operator+ (matrix const& M)
+{
+	return matrix(*this) += M;
+}
+
+matrix matrix::operator- (matrix const& M)
+{
+	return matrix(*this) -= M;
+}
+
 std::istream& operator>> (std::istream& in, matrix& M)
 {
 	for (int i = 0; i < M.rows; i++)

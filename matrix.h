@@ -8,6 +8,12 @@ class matrix
 	int columns;
 	int rows;
 public:
+	matrix()
+	{
+		columns = rows = 0;
+		matr = nullptr;
+	}
+
 	matrix(int row, int col)
 	{
 		columns = col;
@@ -54,6 +60,8 @@ public:
 	matrix& operator= (matrix const& M);
 	matrix& operator+= (matrix const& M);
 	matrix& operator-= (matrix const& M);
+	matrix operator+ (matrix const& M);
+	matrix operator- (matrix const& M);
 	/*friend matrix operator- (matrix const& M);*/
 	friend std::istream& operator>> (std::istream& in, matrix& M);
 	friend std::ostream& operator<< (std::ostream& out, matrix const& M);
