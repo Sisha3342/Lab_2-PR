@@ -1,15 +1,5 @@
 #include "matrix.h"
 
-//matrix operator- (matrix const& M)
-//{
-//	matrix N(M);
-//
-//	for (int i = 0; i < N.rows; i++)
-//		for (int j = 0; j < N.columns; j++)
-//			N.matr[i][j] *= -1;
-//	return N;
-//}
-
 matrix& matrix::operator= (matrix const& M)
 {
 	if (this == &M)
@@ -21,9 +11,9 @@ matrix& matrix::operator= (matrix const& M)
 
 	rows = M.rows;
 	columns = M.columns;
-	matr = new int*[rows];
+	matr = new double*[rows];
 	for (int i = 0; i < rows; i++)
-		matr[i] = new int[columns];
+		matr[i] = new double[columns];
 
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < columns; j++)
@@ -60,6 +50,43 @@ matrix matrix::operator+ (matrix const& M)
 matrix matrix::operator- (matrix const& M)
 {
 	return matrix(*this) -= M;
+}
+
+matrix& matrix::operator*= (matrix const& M)
+{
+	matrix C(rows, M.columns);
+
+	if (columns != M.rows)
+		throw "Incorrect matrices sizes! To multiply matrices the amount of columns of the first and the amount of rows of the second must be the same!";
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < M.columns; j++)
+			for (int r = 0; r < columns; r++)
+				C.matr[i][j] += matr[i][r] * M.matr[r][j];
+	*this = C;
+	return *this;
+}
+
+matrix& matrix::operator*= (double value)
+{
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < columns; j++)
+			matr[i][j] *= value;
+	return *this;
+}
+
+matrix matrix::operator* (matrix const& M)
+{
+	return matrix(*this) *= M;
+}
+
+matrix matrix::operator* (double value)
+{
+	return (*this *= value);
+}
+
+matrix matrix::operator- ()
+{
+	return (*this *= -1);
 }
 
 std::istream& operator>> (std::istream& in, matrix& M)

@@ -2,13 +2,16 @@
 
 int main()
 {
-	matrix A(1, 2);
+	matrix A(2, 2);
 
 	std::cin >> A;
 
-	matrix C(1, 2);
+	matrix B(2, 3);
+	std::cin >> B;
 
-	C = A + A - A;
+	matrix C(1, 1);
+
+	C = A * B;
 
 	std::cout << C;
 

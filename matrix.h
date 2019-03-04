@@ -4,7 +4,7 @@
 
 class matrix
 {
-	int **matr;
+	double **matr;
 	int columns;
 	int rows;
 public:
@@ -19,9 +19,9 @@ public:
 		columns = col;
 		rows = row;
 
-		matr = new int*[rows];
+		matr = new double*[rows];
 		for (int i = 0; i < rows; i++)
-			matr[i] = new int[columns];
+			matr[i] = new double[columns];
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < columns; j++)
@@ -33,9 +33,9 @@ public:
 		columns = M.columns;
 		rows = M.rows;
 
-		matr = new int*[rows];
+		matr = new double*[rows];
 		for (int i = 0; i < rows; i++)
-			matr[i] = new int[columns];
+			matr[i] = new double[columns];
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < columns; j++)
@@ -62,7 +62,11 @@ public:
 	matrix& operator-= (matrix const& M);
 	matrix operator+ (matrix const& M);
 	matrix operator- (matrix const& M);
-	/*friend matrix operator- (matrix const& M);*/
+	matrix& operator*= (matrix const& M);
+	matrix& operator*= (double value);
+	matrix operator* (matrix const& M);
+	matrix operator* (double value);
+	matrix operator- ();
 	friend std::istream& operator>> (std::istream& in, matrix& M);
 	friend std::ostream& operator<< (std::ostream& out, matrix const& M);
 };
