@@ -40,6 +40,7 @@ public:
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < columns; j++)
 				matr[i][j] = M.matr[i][j];
+		
 	}
 
 	matrix(matrix && M)
@@ -67,6 +68,8 @@ public:
 	matrix operator* (matrix const& M);
 	matrix operator* (double value);
 	matrix operator- ();
+	matrix without_irow_jcol(int del_i, int del_j);
+	double Determinant();
 	friend std::istream& operator>> (std::istream& in, matrix& M);
 	friend std::ostream& operator<< (std::ostream& out, matrix const& M);
 };

@@ -2,18 +2,30 @@
 
 int main()
 {
-	matrix A(2, 2);
+	matrix A(3, 3);
+//	matrix B(3, 3);
 
 	std::cin >> A;
+//	std::cin >> B;
 
-	matrix B(2, 3);
-	std::cin >> B;
+	try
+	{
+		/*matrix C = A + B;
+		std::cout << C;
 
-	matrix C(1, 1);
+		matrix D = A - B;
+		std::cout << D;
 
-	C = A * B;
-
-	std::cout << C;
+		matrix E = A * B;
+		std::cout << E;
+*/
+		std::cout << A.Determinant();
+	}
+	catch(const char* ex)
+	{
+		std::cout << ex;
+		return 1;
+	}
 
 	return 0;
 }

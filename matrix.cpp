@@ -89,6 +89,57 @@ matrix matrix::operator- ()
 	return (*this *= -1);
 }
 
+matrix matrix::without_irow_jcol(int del_i, int del_j)
+{
+	std::unique_ptr<matrix> p1(new matrix(rows - 1, columns - 1));
+
+	for (int i = 0, i1 = 0; i1 < p1->rows; i++, i1++)
+	{
+		if (i == del_i)
+		{
+			i++;
+		}
+
+		for (int j = 0, j1 = 0; j1 < p1->columns; j++, j1++)
+		{
+			if (j == del_j)
+			{
+				j++;
+			}
+			p1->matr[i1][j1] = matr[i][j];
+		}
+	}
+
+	return *p1;
+}
+
+double matrix::Determinant()
+{
+	if (rows != columns)
+		throw "To find the determinant, matrix must be square";
+
+
+	double det = 0;
+
+	if (rows == 2 && columns == 2)
+	{
+		det += matr[0][0] * matr[1][1] - matr[0][1] * matr[1][0];
+	}
+	else
+	{
+		for (int i = 0; i < columns; i++)
+		{
+			matrix help_matr = (*this).without_irow_jcol(0, i);
+			if (i % 2 == 0)
+				det += matr[0][i] * help_matr.Determinant();
+			else
+				det -= matr[0][i] * help_matr.Determinant();
+		}
+	}
+
+	return det;
+}
+
 std::istream& operator>> (std::istream& in, matrix& M)
 {
 	for (int i = 0; i < M.rows; i++)
