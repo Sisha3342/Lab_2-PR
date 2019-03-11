@@ -4,7 +4,7 @@ int main()
 {
 	setlocale(LC_ALL, "rus");
 
-	concert_list lisr2("lulq.txt");
+	concert_list lisr2("list.txt");
 
 	std::cout << lisr2;
 
