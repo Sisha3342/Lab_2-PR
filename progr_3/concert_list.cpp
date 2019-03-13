@@ -28,6 +28,7 @@ std::istream& operator>> (std::istream& in, concert_list& list1)
 
 		std::cout << "Concert was added. Press 'q' to quit or 'c' to put another concert in the list: ";
 		in >> c;
+		in.ignore();
 	}
 
 	return in;
