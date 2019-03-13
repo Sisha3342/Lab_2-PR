@@ -40,8 +40,6 @@ public:
 
 		while(fin1.getline(temp, MAX_LENGTH))
 		{
-			//list = new concert;
-
 			char *div, *div1, *p = strtok_s(temp, ";", &div);
 			strcpy_s(list[index].name, MAX_LENGTH, p);
 			p = strtok_s(0, ";", &div);
@@ -72,11 +70,21 @@ public:
 		}
 	}
 
+	concert_list(concert_list && list1)
+	{
+		concerts_count = list1.concerts_count;
+		list = list1.list;
+	}
+
 	virtual ~concert_list()
 	{
 		delete[] list;
 	}
 
-	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
+	void append(concert const& conc);
+	int get_concerts_count();
+	concert& operator[](int index);
 
+	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
+	friend std::istream& operator>> (std::istream& in, concert_list& list1);
 };
