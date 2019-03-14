@@ -6,55 +6,63 @@ int main()
 {
 	setlocale(LC_ALL, "rus");
 	int choice = 0;
-	concert_list list_1("list.txt");
 
-
-	while(choice != 6)
+	try
 	{
-		DisplayMenu(list_1);
-		choice = _getch() - 48;
-		system("cls");
+		concert_list list_1("lul.csv");
 
-		switch (choice)
+		while (choice != 6)
 		{
-		case 1:
-			std::cout << list_1;
-			std::cout << std::endl << "Press any key to go back to menu";
-			_getch();
-			break;
-		case 2:
-			std::cin >> list_1;
-			break;
-		case 3:
-			int index;
-			std::cout << list_1;
-			std::cout << std::endl << "Input the index of the concert you want to reserve ticket for: ";
-			std::cin >> index;
+			DisplayMenu(list_1);
+			choice = _getch() - 48;
+			system("cls");
 
-			if (index > list_1.get_concerts_count() || index <= 0)
-				throw "Invalid index choice. Out of list range";
-			else
-				list_1.reserve_ticket(index - 1);
+			switch (choice)
+			{
+			case 1:
+				std::cout << list_1;
+				std::cout << std::endl << "Press any key to go back to menu";
+				_getch();
+				break;
+			case 2:
+				std::cin >> list_1;
+				break;
+			case 3:
+				int index;
+				std::cout << list_1;
+				std::cout << std::endl << "Input the index of the concert you want to reserve ticket for: ";
+				std::cin >> index;
 
-			break;
-		case 4:
-			list_1.sort_for_date();
-			break;
-		case 5:
-			list_1.sort_for_name();
-			break;
-		case 6:
-			break;
-		default:
-			std::cout << "There is no such point of menu. Please, choose another one. Press any key to go back to menu";
-			_getch();
-			break;
+				if (index > list_1.get_concerts_count() || index <= 0)
+					throw "Invalid index choice. Out of list range";
+				else
+					list_1.reserve_ticket(index - 1);
+
+				break;
+			case 4:
+				list_1.sort_for_date();
+				break;
+			case 5:
+				list_1.sort_for_name();
+				break;
+			case 6:
+				break;
+			default:
+				std::cout << "There is no such point of menu. Please, choose another one. Press any key to go back to menu";
+				_getch();
+				break;
+			}
+
+			system("cls");
+
+			list_1.place_in_the_file("lul.csv");
 		}
-
-		system("cls");
 	}
-
-	list_1.place_in_the_file("list.txt");
+	catch(const char* ex)
+	{
+		std::cout << ex;
+		return 1;
+	}
 
 	return 0;
 }
