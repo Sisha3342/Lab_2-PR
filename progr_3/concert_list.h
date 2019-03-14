@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <conio.h>
 #define MAX_LENGTH 128
 
 struct concert
@@ -9,12 +10,25 @@ struct concert
 	int tickets_left;
 	int capacity;
 	char date[MAX_LENGTH];
+
+	void reserve()
+	{
+		if (tickets_left == 0)
+		{
+			throw "You can't reserve the ticket for this concert! There are no tickets left.";
+		}
+		else
+		{
+			tickets_left--;
+		}
+	}
 };
 
 class concert_list
 {
 	concert *list;
 	int concerts_count;
+	int compare(const void* value1, const void* value2);
 public:
 	concert_list()
 	{
@@ -84,6 +98,9 @@ public:
 	void append(concert const& conc);
 	int get_concerts_count();
 	concert& operator[](int index);
+	void reserve_ticket(int conc_index);
+	void sort_for_name();
+	void place_in_the_file(const char* file_path);
 
 	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
 	friend std::istream& operator>> (std::istream& in, concert_list& list1);

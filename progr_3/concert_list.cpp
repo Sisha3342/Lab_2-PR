@@ -34,6 +34,11 @@ std::istream& operator>> (std::istream& in, concert_list& list1)
 	return in;
 }
 
+void concert_list::reserve_ticket(int conc_index)
+{
+	list[conc_index].reserve();
+}
+
 void concert_list::append(concert const& conc)
 {
 	list = (concert*)realloc(list, (++concerts_count) * sizeof(concert));
@@ -56,4 +61,31 @@ concert& concert_list::operator[](int index)
 		throw "Incorrect index choice. Out of list range.";
 
 	return list[index];
+}
+
+int concert_list::compare(const void* concert1, const void* concert2)
+{
+	return strcmp(((concert*)concert1)->name, ((concert*)concert2)->name);
+}
+
+void concert_list::sort_for_name()
+{
+	qsort(list, concerts_count, sizeof(concert), compare);
+}
+
+void concert_list::place_in_the_file(const char* file_path)
+{
+	std::ofstream of1(file_path);
+
+	if(!of1.is_open())
+	{
+		throw "Error! Can't open the file";
+	}
+
+	for (int i = 0; i < concerts_count; i++)
+	{
+		of1 << list[i].name << "; " << list[i].tickets_left << "; " << list[i].capacity << "; " << list[i].date << std::endl;
+	}
+
+	of1.close();
 }
