@@ -1,35 +1,54 @@
 #include "concert_list.h"
 
+void concert::get_info(char* info)
+{
+	char *div, *div1;
+
+	strcpy_s(name, strtok_s(info, ";", &div));
+	capacity = strtol(strtok_s(0, ";", &div), &div1, 10);
+	tickets_left = strtol(strtok_s(0, ";", &div), &div1, 10);
+	date.tm_year = strtol(strtok_s(0, ".", &div), &div1, 10);
+	date.tm_mon = strtol(strtok_s(0, ".", &div), &div1, 10);
+	date.tm_mday = strtol(strtok_s(0, " ", &div), &div1, 10);
+	date.tm_hour = strtol(strtok_s(0, ":", &div), &div1, 10);
+	date.tm_min = strtol(strtok_s(0, ":", &div), &div1, 10);
+}
+
+void concert::reserve()
+{
+	if (tickets_left == 0)
+	{
+		throw std::length_error("There are no tickets left for this concert");
+	}
+	else
+	{
+		tickets_left--;
+	}
+}
+
+std::ostream& operator<< (std::ostream& out, concert const& conc)
+{
+	out << conc.name << ";" << conc.capacity << ";" << conc.tickets_left << "; " << conc.date.tm_year << "." << conc.date.tm_mon << "." << conc.date.tm_mday << " " << conc.date.tm_hour << ":" << conc.date.tm_min;
+	return out;
+}
+
 std::ostream& operator<< (std::ostream& out, concert_list const& list1)
 {
 	for (int i = 0; i < list1.concerts_count; i++)
-		out << list1.list[i].name << ";" << list1.list[i].tickets_left << ";" << list1.list[i].capacity << ";" << list1.list[i].date << std::endl;
+		out << list1.list[i] << std::endl;
 
 	return out;
 }
 
 std::istream& operator>> (std::istream& in, concert_list& list1)
 {
-	concert conc; char c = 'c';
+	concert conc{}; char temp[MAX_LENGTH];
 
-	while(c == 'c')
-	{
-		std::cout << "Concert name: ";
-		in.getline(conc.name, MAX_LENGTH);
-		std::cout << "Tickets left: ";
-		in >> conc.tickets_left;
-		std::cout << "Capacity: ";
-		in >> conc.capacity;
-		std::cout << "Date and time(ex. 2019-04-06 19:00): ";
-		in.ignore();
-		in.getline(conc.date, MAX_LENGTH);
+	in.getline(temp, MAX_LENGTH);
 
-		list1.append(conc);
+	conc.get_info(temp);
 
-		std::cout << "Concert was added. Press 'q' to quit or 'c' to put another concert in the list: ";
-		in >> c;
-		in.ignore();
-	}
+	list1.append(conc);
 
 	return in;
 }
@@ -42,14 +61,14 @@ void concert_list::reserve_ticket(int conc_index)
 void concert_list::append(concert const& conc)
 {
 	if (concerts_count == MAX_SIZE)
-		throw "Too many concerts in the list!";
+		throw std::length_error("Too many concerts in the list");
+
+	list[concerts_count].tickets_left = conc.tickets_left;
+	list[concerts_count].capacity = conc.capacity;
+	list[concerts_count].date = conc.date;
+	strcpy_s(list[concerts_count].name, MAX_LENGTH, conc.name);
 
 	concerts_count++;
-
-	list[concerts_count - 1].tickets_left = conc.tickets_left;
-	list[concerts_count - 1].capacity = conc.capacity;
-	strcpy_s(list[concerts_count - 1].date, MAX_LENGTH, conc.date);
-	strcpy_s(list[concerts_count - 1].name, MAX_LENGTH, conc.name);
 }
 
 int concert_list::get_concerts_count()
@@ -60,7 +79,7 @@ int concert_list::get_concerts_count()
 concert& concert_list::operator[](int index)
 {
 	if (index >= concerts_count || index < 0)
-		throw "Incorrect index choice. Out of list range.";
+		throw std::out_of_range("Invalid index. Out of list range");
 
 	return list[index];
 }
@@ -72,33 +91,27 @@ int compare_name(const void* concert1, const void* concert2)
 
 int compare_date(const void* concert1, const void* concert2)
 {
-	return strcmp(((concert*)concert1)->date, ((concert*)concert2)->date);
+	tm date1 = ((concert*)concert1)->date;
+	tm date2 = ((concert*)concert2)->date;
+
+	if (date1.tm_year != date2.tm_year)
+		return date2.tm_year - date1.tm_year;
+
+	if (date1.tm_mon != date2.tm_mon)
+		return date2.tm_mon - date1.tm_mon;
+
+	if (date1.tm_mday != date2.tm_mday)
+		return date2.tm_mday - date1.tm_mday;
+
+	return 0;
 }
 
-void concert_list::sort_for_name()
+void concert_list::sort_by_name()
 {
 	qsort(list, concerts_count, sizeof(concert), compare_name);
 }
 
-void concert_list::sort_for_date()
+void concert_list::sort_by_date()
 {
 	qsort(list, concerts_count, sizeof(concert), compare_date);
-}
-
-
-void concert_list::place_in_the_file(const char* file_path)
-{
-	std::ofstream of1(file_path);
-
-	if(!of1.is_open())
-	{
-		throw "Error! Can't open the file";
-	}
-
-	for (int i = 0; i < concerts_count; i++)
-	{
-		of1 << list[i].name << "; " << list[i].tickets_left << "; " << list[i].capacity << "; " << list[i].date << std::endl;
-	}
-
-	of1.close();
 }
