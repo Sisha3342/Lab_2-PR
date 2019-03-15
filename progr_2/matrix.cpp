@@ -25,7 +25,7 @@ matrix& matrix::operator= (matrix const& M)
 matrix& matrix::operator+= ( matrix const& M)
 {
 	if (rows != M.rows || columns != M.columns)
-		throw "Incorrect matrices sizes! To add one matrix to another, their sizes must be the same!";
+		throw std::length_error("Matrices columns and rows must have the same size");
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < columns; j++)
 			matr[i][j] += M.matr[i][j];
@@ -35,7 +35,7 @@ matrix& matrix::operator+= ( matrix const& M)
 matrix& matrix::operator-= (matrix const& M)
 {
 	if (rows != M.rows || columns != M.columns)
-		throw "Incorrect matrices sizes! To sub one matrix from another, their sizes must be the same!";
+		throw std::length_error("Matrices columns and rows must have the same size");
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < columns; j++)
 			matr[i][j] -= M.matr[i][j];
@@ -57,7 +57,7 @@ matrix& matrix::operator*= (matrix const& M)
 	matrix C(rows, M.columns);
 
 	if (columns != M.rows)
-		throw "Incorrect matrices sizes! To multiply matrices the amount of columns of the first and the amount of rows of the second must be the same!";
+		throw std::length_error("the amount of columns of the first and the amount of rows of the second must be the same!");
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < M.columns; j++)
 			for (int r = 0; r < columns; r++)
@@ -116,8 +116,7 @@ matrix matrix::without_irow_jcol(int del_i, int del_j)
 double matrix::Determinant()
 {
 	if (rows != columns)
-		throw "To find the determinant, matrix must be square";
-
+		throw std::length_error("To find the determinant, matrix must be square");
 
 	double det = 0;
 
@@ -145,7 +144,6 @@ std::istream& operator>> (std::istream& in, matrix& M)
 	for (int i = 0; i < M.rows; i++)
 		for (int j = 0; j < M.columns; j++)
 		{
-			std::cout << "Input [" << i << "][" << j << "] element: ";
 			in >> M.matr[i][j];
 		}
 
