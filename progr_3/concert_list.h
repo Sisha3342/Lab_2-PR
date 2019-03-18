@@ -1,6 +1,8 @@
 #pragma once
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <boost/algorithm/string.hpp>
 #define MAX_SIZE 50
 
@@ -65,4 +67,4 @@ public:
 };
 
 int compare_name(concert const& concert1, concert const& concert2);
-int compare_date(const void* concert1, const void* concert2);
+int compare_date(concert const& concert1, concert const& concert2);

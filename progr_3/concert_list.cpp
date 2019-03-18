@@ -2,17 +2,15 @@
 
 void concert::get_info(std::string info)
 {
+	std::string format = "%Y-%m-%d %H:%M";
 	std::vector<std::string> results;
-	boost::split(results, info, [](char c) {return c == ' ' || c == ';' || c == ':' || c == '-'; });
+	boost::split(results, info, [](char c) {return  c == ';' || c == '\n'; });
 
 	name = results[0];
 	capacity = std::stol(results[1]);
 	tickets_left = std::stol(results[2]);
-	date.tm_year = std::stol(results[4]);
-	date.tm_mon = std::stol(results[5]);
-	date.tm_mday = std::stol(results[6]);
-	date.tm_hour = std::stol(results[7]);
-	date.tm_min = std::stol(results[8]);
+	std::stringstream ss(results[3]);
+	ss >> std::get_time(&date, format.c_str());
 }
 
 void concert::reserve()
@@ -29,13 +27,15 @@ void concert::reserve()
 
 std::ostream& operator<< (std::ostream& out, concert const& conc)
 {
-	out << conc.name << ";" << conc.capacity << ";" << conc.tickets_left << "; " << conc.date.tm_year << "-" << conc.date.tm_mon << "-" << conc.date.tm_mday << " " << conc.date.tm_hour << ":" << conc.date.tm_min;
+
+	out << conc.name << ";" << conc.capacity << ";" << conc.tickets_left << "; " << conc.date.tm_year + 1900 << "-" << conc.date.tm_mon + 1 << "-" << conc.date.tm_mday << " " << conc.date.tm_hour << ":" << conc.date.tm_min;
+
 	return out;
 }
 
 std::ostream& operator<< (std::ostream& out, concert_list const& list1)
 {
-	for (int i = 0; i < list1.concerts_count; i++)
+	for (auto i = 0; i < list1.concerts_count; i++)
 		out << list1.list[i] << std::endl;
 
 	return out;
@@ -76,7 +76,7 @@ int concert_list::get_concerts_count() const
 	return concerts_count;
 }
 
-concert& concert_list::operator[](int index) const
+concert& concert_list::operator[](const int index) const
 {
 	if (index >= concerts_count || index < 0)
 		throw std::out_of_range("Invalid index. Out of list range");
@@ -92,29 +92,20 @@ int compare_name(concert const& concert1, concert const& concert2)
 	return name1 < name2;
 }
 
-//int compare_date(const void* concert1, const void* concert2)
-//{
-//	tm date1 = ((concert*)concert1)->date;
-//	tm date2 = ((concert*)concert2)->date;
-//
-//	if (date1.tm_year != date2.tm_year)
-//		return date2.tm_year - date1.tm_year;
-//
-//	if (date1.tm_mon != date2.tm_mon)
-//		return date2.tm_mon - date1.tm_mon;
-//
-//	if (date1.tm_mday != date2.tm_mday)
-//		return date2.tm_mday - date1.tm_mday;
-//
-//	return 0;
-//}
+int compare_date(concert const& concert1, concert const& concert2)
+{ 
+	tm date1 = concert1.date;
+	tm date2 = concert2.date;
+
+	return mktime(&date2) < mktime(&date1);
+}
 
 void concert_list::sort_by_name() const
 {
 	std::sort(list, list + concerts_count, compare_name);
 }
 
-//void concert_list::sort_by_date() const
-//{
-//	qsort(list, concerts_count, sizeof(concert), compare_date);
-//}
+void concert_list::sort_by_date() const
+{
+	std::sort(list, list + concerts_count, compare_date);
+}
