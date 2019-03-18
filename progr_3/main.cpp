@@ -7,7 +7,7 @@ int main()
 	
 	concert_list list_1;
 
-	std::fstream fin1("lul1.csv");
+	std::fstream fin1("lul1.txt");
 
 	while (!fin1.eof())
 	{
@@ -23,7 +23,6 @@ int main()
 
 	fin1 << list_1;
 	fin1.close();
-	
 
 	return 0;
 }

@@ -1,17 +1,17 @@
 #pragma once
-#include <iostream>
 #include <fstream>
-#define MAX_LENGTH 128
+#include <iostream>
+#include <boost/algorithm/string.hpp>
 #define MAX_SIZE 50
 
 struct concert
 {
-	char name[MAX_LENGTH];
-	int tickets_left;
-	int capacity;
-	tm date;
+	std::string name;
+	int tickets_left{};
+	int capacity{};
+	tm date{};
 
-	void get_info(char* info);
+	void get_info(std::string info);
 	void reserve();
 	friend std::ostream& operator<< (std::ostream& out, concert const& conc);
 };
@@ -35,7 +35,7 @@ public:
 
 		for (int i = 0; i < concerts_count; i++)
 		{
-			strcpy_s(list[i].name, MAX_LENGTH, list1.list[i].name);
+			list[i].name = list1.list[i].name;
 			list[i].tickets_left = list1.list[i].tickets_left;
 			list[i].capacity = list1.list[i].capacity;
 			list[i].date = list1.list[i].date;
@@ -54,15 +54,15 @@ public:
 	}
 
 	void append(concert const& conc);
-	int get_concerts_count();
-	concert& operator[](int index);
+	int get_concerts_count() const;
+	concert& operator[](int index) const;
 	void reserve_ticket(int conc_index);
-	void sort_by_name();
-	void sort_by_date();
+	void sort_by_name() const;
+	void sort_by_date() const;
 
 	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
 	friend std::istream& operator>> (std::istream& in, concert_list& list1);
 };
 
-int compare_name(const void* concert1, const void* concert2);
+int compare_name(concert const& concert1, concert const& concert2);
 int compare_date(const void* concert1, const void* concert2);
