@@ -42,6 +42,8 @@ public:
 	void reserve_ticket(int conc_index);
 	void sort_by_name();
 	void sort_by_date();
+	std::vector<concert>::iterator begin();
+	std::vector<concert>::iterator end();
 
 	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
 	friend std::istream& operator>> (std::istream& in, concert_list& list1);

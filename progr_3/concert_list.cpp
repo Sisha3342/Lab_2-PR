@@ -33,10 +33,22 @@ std::ostream& operator<< (std::ostream& out, concert const& conc)
 	return out;
 }
 
+std::vector<concert>::iterator concert_list::begin()
+{
+	return list_.begin();
+}
+
+std::vector<concert>::iterator concert_list::end()
+{
+	return list_.end();
+}
+
 std::ostream& operator<< (std::ostream& out, concert_list const& list1)
 {
-	for (auto i = 0; i < list1.list_.size(); i++)
-		out << list1.list_[i] << std::endl;
+	for(auto element: list1.list_)
+	{
+		out << element << std::endl;
+	}
 
 	return out;
 }
