@@ -63,10 +63,7 @@ void concert_list::append(concert const& conc)
 	if (concerts_count == MAX_SIZE)
 		throw std::length_error("Too many concerts in the list");
 
-	list[concerts_count].tickets_left = conc.tickets_left;
-	list[concerts_count].capacity = conc.capacity;
-	list[concerts_count].date = conc.date;
-	list[concerts_count].name = conc.name;
+	list.push_back(conc);
 
 	concerts_count++;
 }
@@ -76,7 +73,7 @@ int concert_list::get_concerts_count() const
 	return concerts_count;
 }
 
-concert& concert_list::operator[](const int index) const
+concert& concert_list::operator[](const int index) 
 {
 	if (index >= concerts_count || index < 0)
 		throw std::out_of_range("Invalid index. Out of list range");
@@ -100,12 +97,12 @@ int compare_date(concert const& concert1, concert const& concert2)
 	return mktime(&date2) < mktime(&date1);
 }
 
-void concert_list::sort_by_name() const
+void concert_list::sort_by_name()
 {
-	std::sort(list, list + concerts_count, compare_name);
+	std::sort(list.begin(), list.end(), compare_name);
 }
 
-void concert_list::sort_by_date() const
+void concert_list::sort_by_date()
 {
-	std::sort(list, list + concerts_count, compare_date);
+	std::sort(list.begin(), list.end(), compare_date);
 }
