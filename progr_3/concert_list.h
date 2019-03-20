@@ -20,32 +20,23 @@ struct concert
 
 class concert_list
 {
-	std::vector<concert> list;
-	int concerts_count;
+	std::vector<concert> list_;
 public:
-	concert_list()
-	{
-		concerts_count = 0;
-	}
 
-	concert_list(concert_list const& list1)
+	concert_list() = default;
+	concert_list(concert_list const&) = delete;
+	concert_list(concert_list&&) = delete;
+
+	/*concert_list(concert_list const& list1)
 	{
-		concerts_count = list1.concerts_count;
 		list = list1.list;
 	}
 
 	concert_list(concert_list && list1) noexcept
 	{
-		concerts_count = list1.concerts_count;
 		list = list1.list;
-	}
-
-	/*virtual ~concert_list()
-	{
-		delete[] list;
 	}*/
 
-	void append(concert const& conc);
 	int get_concerts_count() const;
 	concert& operator[](int index);
 	void reserve_ticket(int conc_index);
@@ -55,6 +46,3 @@ public:
 	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
 	friend std::istream& operator>> (std::istream& in, concert_list& list1);
 };
-
-int compare_name(concert const& concert1, concert const& concert2);
-int compare_date(concert const& concert1, concert const& concert2);

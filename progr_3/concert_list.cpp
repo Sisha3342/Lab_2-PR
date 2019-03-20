@@ -35,8 +35,8 @@ std::ostream& operator<< (std::ostream& out, concert const& conc)
 
 std::ostream& operator<< (std::ostream& out, concert_list const& list1)
 {
-	for (auto i = 0; i < list1.concerts_count; i++)
-		out << list1.list[i] << std::endl;
+	for (auto i = 0; i < list1.list_.size(); i++)
+		out << list1.list_[i] << std::endl;
 
 	return out;
 }
@@ -48,61 +48,41 @@ std::istream& operator>> (std::istream& in, concert_list& list1)
 	std::getline(in, temp);
 	conc.get_info(temp);
 
-	list1.append(conc);
+	list1.list_.push_back(conc);
 
 	return in;
 }
 
 void concert_list::reserve_ticket(int conc_index)
 {
-	list[conc_index].reserve();
-}
-
-void concert_list::append(concert const& conc)
-{
-	if (concerts_count == MAX_SIZE)
-		throw std::length_error("Too many concerts in the list");
-
-	list.push_back(conc);
-
-	concerts_count++;
+	list_[conc_index].reserve();
 }
 
 int concert_list::get_concerts_count() const
 {
-	return concerts_count;
+	return list_.size();
 }
 
-concert& concert_list::operator[](const int index) 
+concert& concert_list::operator[](const int index)
 {
-	if (index >= concerts_count || index < 0)
+	if (index >= list_.size() || index < 0)
 		throw std::out_of_range("Invalid index. Out of list range");
 
-	return list[index];
-}
-
-int compare_name(concert const& concert1, concert const& concert2)
-{
-	const std::string name1 = concert1.name;
-	const std::string name2 = concert2.name;
-
-	return name1 < name2;
-}
-
-int compare_date(concert const& concert1, concert const& concert2)
-{ 
-	tm date1 = concert1.date;
-	tm date2 = concert2.date;
-
-	return mktime(&date2) < mktime(&date1);
+	return list_[index];
 }
 
 void concert_list::sort_by_name()
 {
-	std::sort(list.begin(), list.end(), compare_name);
+	std::sort(list_.begin(), list_.end(), [](concert const& c1, concert const& c2) -> bool
+	{
+		return c1.name < c2.name;
+	});
 }
 
 void concert_list::sort_by_date()
 {
-	std::sort(list.begin(), list.end(), compare_date);
+	std::sort(list_.begin(), list_.end(), [](concert c1, concert c2) -> bool
+	{
+		return mktime(&c1.date) < mktime(&c2.date);
+	});
 }
