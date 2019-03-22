@@ -44,6 +44,8 @@ public:
 	void sort_by_date();
 	std::vector<concert>::iterator begin();
 	std::vector<concert>::iterator end();
+	std::vector<concert>::iterator find_first_name(std::string const&);
+	std::vector<concert>::iterator find_first_date_between(tm const& date1, tm const& date2);
 
 	friend std::ostream& operator<< (std::ostream& out, concert_list const& list1);
 	friend std::istream& operator>> (std::istream& in, concert_list& list1);

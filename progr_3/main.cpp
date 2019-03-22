@@ -16,7 +16,12 @@ int main()
 
 	std::cout << list_1;
 
-	list_1.sort_by_name();
+	
+
+	if (list_1.find_first_date_between(list_1[0].date, list_1[1].date) != list_1.end())
+	{
+		std::cout << *(list_1.find_first_date_between(list_1[0].date, list_1[1].date));
+	}
 
 	fin1.clear();
 	fin1.seekg(0, std::ios::beg);

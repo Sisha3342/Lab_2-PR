@@ -98,3 +98,21 @@ void concert_list::sort_by_date()
 		return mktime(&c1.date) < mktime(&c2.date);
 	});
 }
+
+std::vector<concert>::iterator concert_list::find_first_name(std::string const& c_name)
+{
+	return std::find_if(list_.begin(), list_.end(), [&c_name](concert const& c)
+	{
+		return c.name == c_name;
+	});
+}
+
+std::vector<concert>::iterator concert_list::find_first_date_between(tm const& date1, tm const& date2)
+{
+	tm d1 = date1, d2 = date2;
+
+	return std::find_if(list_.begin(), list_.end(), [&d1, &d2](concert & c)
+	{
+		return (mktime(&d1) <= mktime(&c.date)) && (mktime(&c.date) <= mktime(&d2));
+	});
+}
