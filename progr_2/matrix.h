@@ -54,8 +54,7 @@ public:
 	virtual ~matrix()
 	{
 		for (int i = 0; i < rows; i++)
-			if (matr[i] != nullptr)
-				delete[] matr[i];
+			delete[] matr[i];
 		delete[] matr;
 	}
 
