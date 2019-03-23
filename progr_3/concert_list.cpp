@@ -28,7 +28,9 @@ void concert::reserve()
 std::ostream& operator<< (std::ostream& out, concert const& conc)
 {
 
-	out << conc.name << ";" << conc.capacity << ";" << conc.tickets_left << "; " << conc.date.tm_year + 1900 << "-" << conc.date.tm_mon + 1 << "-" << conc.date.tm_mday << " " << conc.date.tm_hour << ":" << conc.date.tm_min;
+	out << conc.name << ";" << conc.capacity << ";" 
+	<< conc.tickets_left << "; " << conc.date.tm_year + 1900 << "-" 
+	<< conc.date.tm_mon + 1 << "-" << conc.date.tm_mday << " " << conc.date.tm_hour << ":" << conc.date.tm_min;
 
 	return out;
 }
@@ -75,7 +77,7 @@ int concert_list::get_concerts_count() const
 	return list_.size();
 }
 
-concert& concert_list::operator[](const int index)
+concert& concert_list::operator[](const int index) const
 {
 	if (index >= list_.size() || index < 0)
 		throw std::out_of_range("Invalid index. Out of list range");
