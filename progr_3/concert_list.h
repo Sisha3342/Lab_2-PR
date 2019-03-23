@@ -38,7 +38,7 @@ public:
 	}*/
 
 	int get_concerts_count() const;
-	concert& operator[](int index);
+	concert& operator[](int index) const;
 	void reserve_ticket(int conc_index);
 	void sort_by_name();
 	void sort_by_date();
