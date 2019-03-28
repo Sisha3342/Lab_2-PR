@@ -4,11 +4,12 @@ int main()
 {
 	avl_tree root;
 
-	root.add_node(10);
-	root.add_node(12);
-	root.add_node(11);
+	root.insert(10);
+	root.insert(12);
+	root.insert(9);
+	root.insert(13);
 
-	std::cout << root.right_->get_tree_height();//root.get_tree_height();
+	std::cout << root.get_height();
 
 	return 0;
 }

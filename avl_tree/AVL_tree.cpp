@@ -1,50 +1,87 @@
 #include "AVL_tree.h"
+#include <algorithm>
 
 avl_tree::avl_tree()
 {
-	key_ = height_ = 0;
-	left_ = nullptr;
-	right_ = nullptr;
+	key = 0;
+	left_ = right_ = parent = nullptr;
+	height = 0;
 }
 
-
-int avl_tree::get_tree_height() const
+int avl_tree::get_height() const
 {
-	return height_;
+	return height;
 }
 
-void avl_tree::set_height()
+void avl_tree::insert(int key)
 {
-	if (left_->key_ != right_->key_)
+	avl_tree* temp = this, *prev = this;
+	bool right_from_prev = false;
+
+	if (temp->key == 0)
 	{
-		if (left_->height_ > right_->height_)
-			height_ = left_->height_ + 1;
-		else if (left_->height_ <= right_->height_)
-			height_ = right_->height_ + 1;
+		temp->key = key;
+	}
+	else
+	{
+		while (temp != nullptr && key != temp->key)
+		{
+			prev = temp;
+
+			if (temp->key < key)
+			{
+				temp = temp->right_;
+				right_from_prev = true;
+			}
+			else if (temp->key > key)
+			{
+				temp = temp->left_;
+				right_from_prev = false;
+			}
+			else
+			{
+				return;
+			}
+		}
+
+		temp = new avl_tree;
+		temp->parent = prev;
+		temp->key = key;
+		temp->left_ = temp->right_ = nullptr;
+		temp->height = 0;
+
+		if (right_from_prev)
+		{
+			prev->right_ = temp;
+		}
+		else
+		{
+			prev->left_ = temp;
+		}
+
+		recount_height(temp);
 	}
 }
 
-
-void avl_tree::add_node(double key)
+void avl_tree::recount_height(avl_tree* t)
 {
-	if (right_ == nullptr && left_ == nullptr)
-	{
-		key_ = key;
-		std::unique_ptr<avl_tree> temp(new avl_tree);
-		std::unique_ptr<avl_tree> temp1(new avl_tree);
-		right_ = std::move(temp);
-		left_ = std::move(temp1);
-	}
-		
+	avl_tree* temp = t->parent;
 
-	if (key > key_)
+	while(temp != nullptr)
 	{
-		right_->add_node(key);
-	}
-	else if (key < key_)
-	{
-		left_->add_node(key);
-	}
+		if (temp->right_ == nullptr)
+		{
+			temp->height = temp->left_->height + 1;
+		}
+		else if (temp->left_ == nullptr)
+		{
+			temp->height = temp->right_->height + 1;
+		}
+		else
+		{
+			temp->height = std::max(temp->right_->height, temp->left_->height) + 1;
+		}
 
-	set_height();
+		temp = temp->parent;
+	}
 }

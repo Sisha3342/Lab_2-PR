@@ -3,18 +3,18 @@
 
 class avl_tree
 {
-public:
-	double key_;
-	std::unique_ptr<avl_tree> right_;
-	std::unique_ptr<avl_tree> left_;
-	int height_;
+	int key;
+	avl_tree* left_;
+	avl_tree* right_;
+	int height;
+	avl_tree* parent;
 
-	int balance_factor();
-	void set_height();
+	void recount_height(avl_tree* t);
+
 public:
+
 	avl_tree();
 
-	void add_node(double key);
-	int get_tree_height() const;
-
+	void insert(int key);
+	int get_height() const;
 };
