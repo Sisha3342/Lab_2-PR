@@ -5,7 +5,30 @@ avl_tree::avl_tree()
 {
 	key = 0;
 	left_ = right_ = parent = nullptr;
-	height = 0;
+	height = 1;
+}
+
+avl_tree::~avl_tree()
+{
+	while (right_ != nullptr || left_ != nullptr)
+	{
+		avl_tree* temp = this;
+
+		while (temp->right_ != nullptr || temp->left_ != nullptr)
+		{
+			if (temp->right_ != nullptr)
+				temp = temp->right_;
+			else
+				temp = temp->left_;
+		}
+
+		if (temp->parent->right_ == temp)
+			temp->parent->right_ = nullptr;
+		else
+			temp->parent->left_ = nullptr;
+
+		delete temp;
+	}
 }
 
 int avl_tree::get_height() const
@@ -48,7 +71,7 @@ void avl_tree::insert(int key)
 		temp->parent = prev;
 		temp->key = key;
 		temp->left_ = temp->right_ = nullptr;
-		temp->height = 0;
+		temp->height = 1;
 
 		if (right_from_prev)
 		{
@@ -60,12 +83,13 @@ void avl_tree::insert(int key)
 		}
 
 		recount_height(temp);
+		rebalance_tree(temp);
 	}
 }
 
-void avl_tree::recount_height(avl_tree* t)
+void avl_tree::recount_height(avl_tree* current_node)
 {
-	avl_tree* temp = t->parent;
+	avl_tree* temp = current_node->parent;
 
 	while(temp != nullptr)
 	{
@@ -83,5 +107,30 @@ void avl_tree::recount_height(avl_tree* t)
 		}
 
 		temp = temp->parent;
+	}
+}
+
+void avl_tree::rebalance_tree(avl_tree* &current_node)
+{
+	int height_left = 1, height_right = 1;
+
+	if (current_node->left_ != nullptr)
+	{
+		height_left = current_node->left_->get_height();
+	}
+	if (current_node->right_ != nullptr)
+	{
+		height_right = current_node->right_->get_height();
+	}
+
+	const int height_difference = height_left - height_right;
+
+	if (height_difference == 2)
+	{
+		
+	}
+	else if (height_difference == -2)
+	{
+		
 	}
 }
