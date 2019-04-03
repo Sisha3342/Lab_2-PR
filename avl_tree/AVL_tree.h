@@ -1,18 +1,28 @@
 #pragma once
 #include <iostream>
 
-class avl_tree
+struct node
 {
 	int key;
-	avl_tree* left_;
-	avl_tree* right_;
+	node* left_;
+	node* right_;
+	node* parent;
 	int height;
-	avl_tree* parent;
+	int balance_factor;
+};
 
-	void recount_height(avl_tree* current_node);
-	void rebalance_tree(avl_tree* &current_node);
-
+class avl_tree
+{
 public:
+	node* root;
+
+	void recount_height(node* current_node);
+	void rebalance_tree(node* &current_node);
+
+	node* single_right_rotate(node* &change_node);
+	node* single_left_rotate(node* &change_node);
+	node* double_right_rotate(node* &change_node);
+	node* double_left_rotate(node* &change_node);
 
 	avl_tree();
 
@@ -20,4 +30,6 @@ public:
 	int get_height() const;
 
 	~avl_tree();
+
+	friend int height_with_param(node* tree);
 };

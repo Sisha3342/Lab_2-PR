@@ -2,14 +2,16 @@
 
 int main()
 {
-	avl_tree root;
+	avl_tree my_tree;
 
-	root.insert(10);
-	root.insert(12);
-	root.insert(9);
-	root.insert(13);
+	my_tree.insert(20);
+	my_tree.insert(21);
+	my_tree.insert(10);
+	my_tree.insert(9);
+	my_tree.insert(11);
+	my_tree.insert(12);
 
-	std::cout << root.get_height();
+	std::cout << my_tree.get_height();
 
 	return 0;
 }

@@ -3,16 +3,17 @@
 
 avl_tree::avl_tree()
 {
-	key = 0;
-	left_ = right_ = parent = nullptr;
-	height = 1;
+	root = new node;
+	root->key = root->balance_factor = 0;
+	root->left_ = root->right_ = root->parent = nullptr;
+	root->height = 1;
 }
 
 avl_tree::~avl_tree()
 {
-	while (right_ != nullptr || left_ != nullptr)
+	while (root->right_ != nullptr || root->left_ != nullptr)
 	{
-		avl_tree* temp = this;
+		node* temp = root;
 
 		while (temp->right_ != nullptr || temp->left_ != nullptr)
 		{
@@ -29,21 +30,34 @@ avl_tree::~avl_tree()
 
 		delete temp;
 	}
+	delete root;
 }
 
 int avl_tree::get_height() const
 {
-	return height;
+	return root->height;
+}
+
+int height_with_param(node* tree)
+{
+	if (tree == nullptr)
+	{
+		return 0;
+	}
+	else
+	{
+		return tree->height;
+	}
 }
 
 void avl_tree::insert(int key)
 {
-	avl_tree* temp = this, *prev = this;
+	node* temp = root, *prev = root;
 	bool right_from_prev = false;
 
 	if (temp->key == 0)
 	{
-		temp->key = key;
+		temp->key = key; // выделять память только здесь!!!
 	}
 	else
 	{
@@ -67,7 +81,7 @@ void avl_tree::insert(int key)
 			}
 		}
 
-		temp = new avl_tree;
+		temp = new node;
 		temp->parent = prev;
 		temp->key = key;
 		temp->left_ = temp->right_ = nullptr;
@@ -87,9 +101,9 @@ void avl_tree::insert(int key)
 	}
 }
 
-void avl_tree::recount_height(avl_tree* current_node)
+void avl_tree::recount_height(node* current_node)
 {
-	avl_tree* temp = current_node->parent;
+	node* temp = current_node->parent;
 
 	while(temp != nullptr)
 	{
@@ -110,27 +124,114 @@ void avl_tree::recount_height(avl_tree* current_node)
 	}
 }
 
-void avl_tree::rebalance_tree(avl_tree* &current_node)
+void avl_tree::rebalance_tree(node* &current_node)
 {
-	int height_left = 1, height_right = 1;
+	node* temp = current_node;
 
-	if (current_node->left_ != nullptr)
+	temp = temp->parent;
+
+	while(temp)
 	{
-		height_left = current_node->left_->get_height();
-	}
-	if (current_node->right_ != nullptr)
-	{
-		height_right = current_node->right_->get_height();
+		//rotate part
+		temp->balance_factor = height_with_param(temp->right_) - height_with_param(temp->left_);
+
+		if (temp->balance_factor == -2)
+		{
+			if (temp->left_->balance_factor < 0)
+				temp = single_right_rotate(temp);
+			else
+				temp = double_right_rotate(temp);
+		}
+		else if (temp->balance_factor == 2)
+		{
+			if (temp->right_->balance_factor > 0)
+				temp = single_left_rotate(temp);
+			else
+				temp = double_left_rotate(temp);
+		}
+
+		temp->height = std::max(height_with_param(temp->left_), height_with_param(temp->right_)) + 1;
+		temp->balance_factor = height_with_param(temp->right_) - height_with_param(temp->left_);
+		//rotate part end
+
+		temp = temp->parent;
 	}
 
-	const int height_difference = height_left - height_right;
+	/*while (root->parent)
+	{
+		temp = root->parent;
+		root->right_ = temp->right_;
+		root->left_ = temp->left_;
+		root->key = temp->key;
+		root->height = temp->height;
+		root->balance_factor = temp->balance_factor;
+		root->parent = temp->parent;
+	}*/
+ }
 
-	if (height_difference == 2)
+node* avl_tree::single_right_rotate(node*& change_node)
+{
+	/*bool is_root = false;
+
+	if (node->key == this->key)
+		is_root = true;*/
+
+	node* temp = change_node->left_;
+	change_node->left_ = temp->right_;
+	temp->right_ = change_node;
+
+	if (change_node->parent)
 	{
-		
+		if (change_node->parent->left_ == change_node)
+			change_node->parent->left_ = temp;
+		else
+			change_node->parent->right_ = temp;
 	}
-	else if (height_difference == -2)
+
+	temp->parent = change_node->parent;
+	change_node->parent = temp;
+
+	change_node->height = std::max(height_with_param(change_node->right_), height_with_param(change_node->left_)) + 1;
+	temp->height = std::max(height_with_param(temp->right_), height_with_param(temp->left_)) + 1;
+
+	change_node->balance_factor = height_with_param(temp->left_) - height_with_param(temp->right_);
+
+	return temp;
+}
+
+node* avl_tree::single_left_rotate(node*& change_node)
+{
+	node* temp = change_node->right_;
+	change_node->right_ = temp->left_;
+	temp->left_ = change_node;
+
+	if (change_node->parent)
 	{
-		
+		if (change_node->parent->left_ == change_node)
+			change_node->parent->left_ = temp;
+		else
+			change_node->parent->right_ = temp;
 	}
+
+	temp->parent = change_node->parent;
+	change_node->parent = temp;
+
+	change_node->height = std::max(height_with_param(change_node->right_), height_with_param(change_node->left_)) + 1;
+	temp->height = std::max(height_with_param(temp->right_), height_with_param(temp->left_)) + 1;
+
+	change_node->balance_factor = height_with_param(temp->right_) - height_with_param(temp->left_);
+
+	return temp;
+}
+
+node* avl_tree::double_right_rotate(node*& change_node)
+{
+	change_node->left_ = single_left_rotate(change_node->left_);
+	return single_right_rotate(change_node);
+}
+
+node* avl_tree::double_left_rotate(node*& change_node)
+{
+	change_node->right_ = single_right_rotate(change_node->right_);
+	return single_left_rotate(change_node);
 }
