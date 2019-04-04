@@ -9,6 +9,16 @@ avl_tree::avl_tree()
 	root->height = 1;
 }
 
+avl_tree::avl_tree(int value)
+{
+	root = new node;
+	root->balance_factor = 0;
+	root->key = value;
+	root->left_ = root->right_ = root->parent = nullptr;
+	root->height = 1;
+}
+
+
 avl_tree::~avl_tree()
 {
 	while (root->right_ != nullptr || root->left_ != nullptr)
@@ -102,6 +112,75 @@ void avl_tree::insert(int key)
 	}
 }
 
+void avl_tree::remove_node(int value)
+{
+	node* temp = root;
+
+	while(temp)
+	{
+		if (value > temp->key)
+			temp = temp->right_;
+		else if (value < temp->key)
+			temp = temp->left_;
+		else
+			break;
+	}
+
+	if (temp)
+	{
+		if (temp->left_ == nullptr && temp->right_ == nullptr)
+		{
+			node* deleted_parent = temp->parent;
+
+			if (deleted_parent->left_ == temp)
+				deleted_parent->left_ = nullptr;
+			else
+				deleted_parent->right_ = nullptr;
+
+			recount_height(deleted_parent);
+			rebalance_tree(deleted_parent);
+
+			delete temp;
+		}
+		else
+		{
+			node* replacement;
+			node* rep_parent, *rep_side;
+
+			if (height_with_param(temp->right_) < height_with_param(temp->left_))
+			{
+				replacement = find_max(temp->left_);
+				temp->key = replacement->key;
+				rep_parent = replacement->parent;
+				rep_side = replacement->left_;
+				delete replacement;
+				if (rep_parent)
+					rep_parent->right_ = rep_side;
+				if (rep_side)
+					rep_side->parent = rep_parent;
+			}
+			else
+			{
+				replacement = find_min(temp->right_);
+				temp->key = replacement->key;
+				rep_parent = replacement->parent;
+				rep_side = replacement->right_;
+				delete replacement;
+
+				if (rep_parent)
+					rep_parent->left_ = rep_side;
+				if (rep_side)
+					rep_side->parent = rep_parent;
+			}
+
+			recount_height(rep_parent);
+			rebalance_tree(rep_parent);
+		}
+	}
+
+
+}
+
 void avl_tree::recount_height(node* current_node)
 {
 	node* temp = current_node;
@@ -117,8 +196,6 @@ void avl_tree::recount_height(node* current_node)
 void avl_tree::rebalance_tree(node* &current_node)
 {
 	node* temp = current_node;
-
-	temp = temp->parent;
 
 	while(temp)
 	{
@@ -211,4 +288,28 @@ node* avl_tree::double_left_rotate(node*& change_node)
 {
 	change_node->right_ = single_right_rotate(change_node->right_);
 	return single_left_rotate(change_node);
+}
+
+node* avl_tree::find_max(node* current_node)
+{
+	node* temp = current_node;
+
+	while(temp->right_ != nullptr)
+	{
+		temp = temp->right_;
+	}
+
+	return temp;
+}
+
+node* avl_tree::find_min(node* current_node)
+{
+	node* temp = current_node;
+
+	while (temp->left_ != nullptr)
+	{
+		temp = temp->left_;
+	}
+
+	return temp;
 }

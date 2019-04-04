@@ -13,7 +13,6 @@ struct node
 
 class avl_tree
 {
-public:
 	node* root;
 
 	void recount_height(node* current_node);
@@ -23,13 +22,18 @@ public:
 	node* single_left_rotate(node* &change_node);
 	node* double_right_rotate(node* &change_node);
 	node* double_left_rotate(node* &change_node);
+	node* find_max(node* current_node);
+	node* find_min(node* current_node);
+	friend int height_with_param(node* tree);
+public:
 
 	avl_tree();
+	avl_tree(int value);
 
 	void insert(int key);
+	void remove_node(int value);
 	int get_height() const;
 
 	~avl_tree();
 
-	friend int height_with_param(node* tree);
 };
