@@ -1,5 +1,4 @@
 #include "AVL_tree.h"
-#include <algorithm>
 
 avl_tree::avl_tree()
 {
@@ -290,7 +289,7 @@ node* avl_tree::double_left_rotate(node*& change_node)
 	return single_left_rotate(change_node);
 }
 
-node* avl_tree::find_max(node* current_node)
+node* avl_tree::find_max(node* current_node) const
 {
 	node* temp = current_node;
 
@@ -302,7 +301,7 @@ node* avl_tree::find_max(node* current_node)
 	return temp;
 }
 
-node* avl_tree::find_min(node* current_node)
+node* avl_tree::find_min(node* current_node) const
 {
 	node* temp = current_node;
 
@@ -312,4 +311,191 @@ node* avl_tree::find_min(node* current_node)
 	}
 
 	return temp;
+}
+
+int avl_tree::right_height() const
+{
+	node* temp = root;
+	int height = 0;
+
+	while (temp)
+	{
+		temp = temp->right_;
+		height++;
+	}
+
+	return height;
+}
+
+int avl_tree::left_height() const
+{
+	node* temp = root;
+	int height = 0;
+
+	while (temp)
+	{
+		temp = temp->left_;
+		height++;
+	}
+
+	return height;
+}
+
+int avl_tree::right_iterator::deeper_right(int count) const
+{
+	node* temp = tree_.root;
+
+	while (count--)
+		temp = temp->right_;
+
+	return temp->key;
+}
+
+int avl_tree::left_iterator::deeper_left(int count) const
+{
+	node* temp = tree_.root;
+
+	while (count--)
+		temp = temp->left_;
+
+	return temp->key;
+}
+
+int avl_tree::deep_iterator::in_deep(int count) const
+{
+	node* temp = tree_.root;
+
+	while(count--)
+	{
+		if (height_with_param(temp->left_) > height_with_param(temp->right_))
+			temp = temp->left_;
+		else
+			temp = temp->right_;
+	}
+
+	return temp->key;
+}
+
+
+avl_tree::right_iterator::right_iterator(avl_tree const& itr_tree) : tree_(itr_tree), index_(0)
+{
+}
+
+avl_tree::right_iterator::right_iterator(avl_tree const& itr_tree, bool) : tree_(itr_tree), index_(itr_tree.right_height())
+{
+}
+
+
+avl_tree::right_iterator avl_tree::right_iterator::operator++(int)
+{
+	index_++;
+
+	return *this;
+}
+
+int avl_tree::right_iterator::operator*() const
+{
+	return deeper_right(index_);
+}
+
+avl_tree::right_iterator avl_tree::rbegin()
+{
+	return right_iterator(*this);
+}
+
+avl_tree::right_iterator avl_tree::rend() const
+{
+	return right_iterator(*this, true);
+}
+
+bool avl_tree::right_iterator::operator!=(right_iterator const& iter) const
+{
+	return index_ != iter.index_;
+}
+
+bool avl_tree::right_iterator::operator==(right_iterator const& iter) const
+{
+	return index_ == iter.index_;
+}
+
+avl_tree::left_iterator::left_iterator(avl_tree const& itr_tree) : tree_(itr_tree), index_(0)
+{
+}
+
+avl_tree::left_iterator::left_iterator(avl_tree const& itr_tree, bool) : tree_(itr_tree), index_(itr_tree.right_height())
+{
+}
+
+
+avl_tree::left_iterator avl_tree::left_iterator::operator++(int)
+{
+	index_++;
+
+	return *this;
+}
+
+int avl_tree::left_iterator::operator*() const
+{
+	return deeper_left(index_);
+}
+
+avl_tree::left_iterator avl_tree::lbegin()
+{
+	return left_iterator(*this);
+}
+
+avl_tree::left_iterator avl_tree::lend() const
+{
+	return left_iterator(*this, true);
+}
+
+bool avl_tree::left_iterator::operator!=(left_iterator const& iter) const
+{
+	return index_ != iter.index_;
+}
+
+bool avl_tree::left_iterator::operator==(left_iterator const& iter) const
+{
+	return index_ == iter.index_;
+}
+
+avl_tree::deep_iterator::deep_iterator(avl_tree const& itr_tree) : tree_(itr_tree), index_(0)
+{
+}
+
+avl_tree::deep_iterator::deep_iterator(avl_tree const& itr_tree, bool) : tree_(itr_tree), index_(itr_tree.get_height())
+{
+}
+
+
+avl_tree::deep_iterator avl_tree::deep_iterator::operator++(int)
+{
+	index_++;
+
+	return *this;
+}
+
+int avl_tree::deep_iterator::operator*() const
+{
+	return in_deep(index_);
+}
+
+avl_tree::deep_iterator avl_tree::dbegin() const
+{
+	return deep_iterator(*this);
+}
+
+avl_tree::deep_iterator avl_tree::dend() const
+{
+	return deep_iterator(*this, true);
+}
+
+bool avl_tree::deep_iterator::operator!=(deep_iterator const& iter) const
+{
+	return index_ != iter.index_;
+}
+
+bool avl_tree::deep_iterator::operator==(deep_iterator const& iter) const
+{
+	return index_ == iter.index_;
 }

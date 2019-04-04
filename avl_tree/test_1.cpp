@@ -16,7 +16,22 @@ int main()
 
 	my_tree.remove_node(55);
 
-	std::cout << my_tree.get_height();
+	for (avl_tree::left_iterator it = my_tree.lbegin(); it != my_tree.lend(); it++)
+		std::cout << *(it);
+
+	std::cout << "\n";
+
+	for (avl_tree::right_iterator it = my_tree.rbegin(); it != my_tree.rend(); it++)
+		std::cout << *(it);
+
+	std::cout << "\n";
+
+	for (avl_tree::deep_iterator it = my_tree.dbegin(); it != my_tree.dend(); it++)
+		std::cout << *(it);
+
+
+
+	//std::cout << my_tree.get_height();
 
 	return 0;
 }
