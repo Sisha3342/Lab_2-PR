@@ -7,13 +7,14 @@ class Matrix
 	size_t cols_ = 0;
 	std::vector<std::vector<int>> matrix_;
 public:
-
+	Matrix();
 	Matrix(size_t rows, size_t cols);
 	Matrix(std::vector<std::vector<int>> matrix);
 	Matrix(Matrix const& M) = delete;
 	Matrix(Matrix && M) = delete;
 
-	Matrix operator*(Matrix const& M);
-	bool operator==(Matrix const& M);
-	bool operator!=(Matrix const& M);
+	Matrix operator*(Matrix const& m);
+	friend bool operator==(Matrix const& m1, Matrix const& m2);
+	bool operator!=(Matrix const& m);
+	Matrix& operator=(Matrix const& m);
 };
