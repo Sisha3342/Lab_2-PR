@@ -9,6 +9,7 @@ class Matrix
 public:
 
 	Matrix(size_t rows, size_t cols);
+	Matrix(std::vector<std::vector<int>> matrix);
 	Matrix(Matrix const& M) = delete;
 	Matrix(Matrix && M) = delete;
 
