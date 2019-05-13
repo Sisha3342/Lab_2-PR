@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../parralel_matrix_mult/matrix.h"
+#include "matrix.h"
 
 class MatrixMult : public ::testing::Test
 {
