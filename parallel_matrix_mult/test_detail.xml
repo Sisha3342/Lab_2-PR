@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" timestamp="2019-05-17T15:37:51" time="101.632" name="AllTests">
+  <testsuite name="MatrixMult" tests="5" failures="0" disabled="0" errors="0" time="101.63">
+    <testcase name="with_1_thread" status="run" time="41.504" classname="MatrixMult" />
+    <testcase name="with_2_threads" status="run" time="21.38" classname="MatrixMult" />
+    <testcase name="with_3_threads" status="run" time="14.476" classname="MatrixMult" />
+    <testcase name="with_4_threads" status="run" time="11.177" classname="MatrixMult" />
+    <testcase name="with_5_threads" status="run" time="13.089" classname="MatrixMult" />
+  </testsuite>
+</testsuites>

@@ -6,14 +6,14 @@ Matrix::Matrix()
 	rows_ = cols_ = 0;
 }
 
-Matrix Matrix::parallel_mult(Matrix const& m)
+Matrix Matrix::parallel_mult(Matrix const& m, int threads_count)
 {
 	if (cols_ != m.rows_)
 		throw std::length_error("incorrect matrices sizes");
 
 	std::vector<std::vector<int>> result(rows_, std::vector<int>(m.cols_));
 
-	int threads_count = std::thread::hardware_concurrency();
+	//int threads_count = std::thread::hardware_concurrency();
 	std::vector<std::thread> my_threads;
 	my_threads.reserve(threads_count);
 
@@ -21,16 +21,16 @@ Matrix Matrix::parallel_mult(Matrix const& m)
 
 	for (int i = 0, j = 0; i < rows_;)
 	{
-		int temp = to_each_thread;
+		int in_each_thread = to_each_thread;
 		if (left_count != 0)
 		{
-			temp++;
+			in_each_thread++;
 			left_count--;
 		}
 
-		my_threads.emplace_back(std::thread([i, j, temp, &result, this, &m]()
+		my_threads.emplace_back(std::thread([i, j, in_each_thread, &result, this, &m]()
 		{
-			int l = j, t = temp;
+			int l = j, t = in_each_thread;
 			for (int k = i; t != 0; k++)
 			{
 				for (; t != 0 && l < m.cols_; l++)
@@ -42,8 +42,8 @@ Matrix Matrix::parallel_mult(Matrix const& m)
 				l = 0;
 			}
 		}));
-		i += (j + temp) / m.cols_;
-		j = (j + temp) % m.cols_;
+		i += (j + in_each_thread) / m.cols_;
+		j = (j + in_each_thread) % m.cols_;
 	}
 
 	for (int i = 0; i < my_threads.size(); i++)
