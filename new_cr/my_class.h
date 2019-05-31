@@ -23,7 +23,7 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& out, my_class<T> const& my_list)
 	{
-		for (int i = 0; i < my_list.objects_list.size(); i++)
+		for (size_t i = 0; i < my_list.objects_list.size(); i++)
 			out << my_list.objects_list[i] << std::endl;
 
 		return out;
@@ -53,13 +53,13 @@ public:
 			return c.name.substr(0, min_len) == str.substr(0, min_len);
 		});
 
-		std::vector<T> found_concerts;
+		std::vector<T> found_names;
 
 		while (temp != objects_list.end())
 		{
-			found_concerts.push_back(*temp);
+			found_names.push_back(*temp);
 
-			temp = std::find_if(++temp, objects_list.end(), [&str](concert const& c)
+			temp = std::find_if(++temp, objects_list.end(), [&str](T const& c)
 			{
 				int len1 = c.name.length(), len2 = str.length();
 				int min_len = len1 <= len2 ? len1 : len2;
@@ -68,7 +68,7 @@ public:
 			});
 		}
 
-		return found_concerts;
+		return found_names;
 	}
 
 	void sort_()

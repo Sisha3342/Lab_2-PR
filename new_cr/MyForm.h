@@ -166,7 +166,7 @@ namespace krproject {
 		String^ code;
 		String^ year;
 		
-		for (int i = 0; i < obj_list_.get_count(); i++)
+		for (size_t i = 0; i < obj_list_.get_count(); i++)
 		{
 			test_class temp = obj_list_[i];
 
