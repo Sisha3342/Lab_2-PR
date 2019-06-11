@@ -13,6 +13,12 @@ struct test_struct
 		this->price = price;
 	}
 
+	test_struct(char name[30])
+	{
+		strcpy_s(this->name, name);
+		price = 0;
+	}
+
 	friend std::ostream& operator<<(std::ostream& out, test_struct const& my_struct)
 	{
 		out << my_struct.name << " " << my_struct.price;
@@ -26,6 +32,10 @@ int compare(const void* a, const void* b)
 	return strcmp(((test_struct*)a)->name, ((test_struct*)b)->name);
 }
 
+int reverse_compare(const void* a, const void* b)
+{
+	return strcmp(((test_struct*)b)->name, ((test_struct*)a)->name);
+}
 
 int main()
 {
@@ -40,15 +50,21 @@ int main()
 	arr[2] = C;
 
 	test_struct* arr1 = new test_struct[3];
-	arr1[0] = B;
-	arr1[1] = C;
+	arr1[0] = C;
+	arr1[1] = B;
 	arr1[2] = D;
 
 	my_set<test_struct> m_set(arr, 3, compare);
 	my_set<test_struct> m1_set(arr1, 3, compare);
 	my_set<test_struct> m2_set(m_set | m1_set);
 	my_set<test_struct> m3_set(m_set & m1_set);
-	std::cout << m2_set << "\n" << m3_set;
-	
+	m2_set.sort(reverse_compare);
+	std::cout << m2_set;
+
+	if (m2_set.find(test_struct("print")))
+	{
+		std::cout << "LUL";
+	}
+
 	return 0;
 }

@@ -8,7 +8,8 @@ class my_set
 	size_t count;
 	size_t max_size;
 	T* objects_set;
-	int(*compare)(const void* a, const void* b);
+	int(*compare_func)(const void* a, const void* b);
+	int(*sort_compare_func)(const void* a, const void* b);
 
 	void reallocate_memory()
 	{
@@ -27,11 +28,11 @@ class my_set
 		delete[] temp_array;
 	}
 
-	void append_for_intersection(T object, my_set<T> set_1, my_set<T> set_2)
+	void append_for_intersection(T object, my_set set_1, my_set set_2)
 	{
-		if (bsearch(&object, set_1.objects_set, set_1.count, sizeof(T), set_1.compare) && 
-			bsearch(&object, set_2.objects_set, set_2.count, sizeof(T), set_1.compare) && 
-			(bsearch(&object, objects_set, count, sizeof(T), set_1.compare) == nullptr))
+		if (set_1.find(object) &&
+			set_2.find(object) &&
+			(find(object) == nullptr))
 		{
 			if (max_size == count)
 			{
@@ -40,6 +41,8 @@ class my_set
 
 			objects_set[count++] = object;
 		}
+
+		sort_compare_func = nullptr;
 	}
 
 
@@ -47,13 +50,23 @@ public:
 	my_set()
 	{
 		count = max_size = 0;
-		compare = nullptr;
+		compare_func = nullptr;
+		objects_set = nullptr;
+		sort_compare_func = nullptr;
+	}
+
+	explicit my_set(int(*compare_func)(const void*, const void*))
+	{
+		this->compare_func = compare_func;
+		sort_compare_func = nullptr;
+		count = max_size = 0;
 		objects_set = nullptr;
 	}
 
-	my_set(T* objects_list, size_t objects_count, int(*compare)(const void*, const void*))
+	explicit my_set(T* objects_list, size_t objects_count, int(*compare_func)(const void*, const void*))
 	{
-		this->compare = compare;
+		this->compare_func = compare_func;
+		sort_compare_func = nullptr;
 		max_size = objects_count;
 		count = 0;
 
@@ -63,37 +76,57 @@ public:
 			append(objects_list[i]);
 	}
 
-	my_set(my_set<T> && set) noexcept
+	my_set(my_set && set) noexcept
 	{
 		count = set.count;
 		max_size = set.max_size;
 		objects_set = set.objects_set;
-		compare = set.compare;
-		set.compare = nullptr;
+		compare_func = set.compare_func;
+		sort_compare_func = set.sort_compare_func;
+		set.compare_func = nullptr;
 		set.objects_set = nullptr;
 	}
 
-	my_set(my_set<T> const& set)
+	my_set(my_set const& set)
 	{
 		count = set.count;
 		max_size = set.max_size;
 		objects_set = new T[max_size];
-		compare = set.compare;
+		compare_func = set.compare_func;
+		sort_compare_func = set.sort_compare_func;
 		for (int i = 0; i < count; i++)
 		{
 			objects_set[i] = set.objects_set[i];
 		}
 	}
 
-	my_set<T>& operator=(my_set<T>const& set)
+	size_t get_size()
 	{
-		return my_set(set.objects_set, set.count, set.compare);
+		return count;
+	}
+
+
+	my_set& operator=(my_set const& set)
+	{
+		count = set.count;
+		max_size = set.max_size;
+		compare_func = set.compare_func;
+		sort_compare_func = set.sort_compare_func;
+		delete[] objects_set;
+		objects_set = new T[max_size];
+
+		for (int i = 0; i < count; i++)
+		{
+			objects_set[i] = set.objects_set[i];
+		}
+
+		return *this;
 	}
 
 
 	void append(T object)
 	{
-		if (bsearch(&object, objects_set, count, sizeof(T), compare) == nullptr)
+		if (lfind(&object, objects_set, &count, sizeof(T), compare) == nullptr)
 		{
 			if (max_size == count)
 			{
@@ -102,6 +135,7 @@ public:
 
 			objects_set[count++] = object;
 		}
+		sort_compare_func = nullptr;
 	}
 
 	T& operator[](int index) const
@@ -112,9 +146,27 @@ public:
 		return objects_set[index];
 	}
 
-	friend my_set<T> operator|(my_set<T> const& set_1, my_set<T> const& set_2)
+	void sort(int(*compare_function)(const void* a, const void* b))
 	{
-		if (set_1.compare != set_2.compare)
+		qsort(objects_set, count, sizeof(T), compare_function);
+		sort_compare_func = compare_function;
+	}
+
+	T* find(T const& key) 
+	{
+		if (sort_compare_func)
+		{
+			return static_cast<T*>(bsearch(&key, objects_set, count, sizeof(T), sort_compare_func));
+		}
+		else
+		{
+			return static_cast<T*>(lfind(&key, objects_set, &count, sizeof(T), compare_func));
+		}
+	}
+
+	friend my_set operator|(my_set const& set_1, my_set const& set_2)
+	{
+		if (set_1.compare_func != set_2.compare_func)
 			throw std::invalid_argument("Can't unite sets with different compare functions");
 
 		my_set<T> temp(set_1);
@@ -123,13 +175,13 @@ public:
 
 		return my_set(temp);
 	}
-
-	friend my_set<T> operator&(my_set<T> const& set_1, my_set<T> const& set_2)
+	
+	friend my_set operator&(my_set const& set_1, my_set const& set_2)
 	{
-		if (set_1.compare != set_2.compare)
-			throw std::invalid_argument("Can't unite sets with different compare functions");
+		if (set_1.compare_func != set_2.compare_func)
+			throw std::invalid_argument("Can't intersect sets with different compare functions");
 
-		my_set<T> temp;
+		my_set<T> temp(set_1.compare_func);
 		for (int i = 0; i < set_1.count; i++)
 			temp.append_for_intersection(set_1[i], set_1, set_2);
 		for (int i = 0; i < set_2.count; i++)
@@ -138,7 +190,7 @@ public:
 		return my_set(temp);
 	}
 
-	friend std::ostream& operator<<(std::ostream& out, my_set<T> const& set)
+	friend std::ostream& operator<<(std::ostream& out, my_set const& set)
 	{
 		for (int i = 0; i < set.count; i++)
 			out << set[i] << "\n";
